@@ -60,8 +60,46 @@ variable "max_subnets" {
 variable "access_ip" {
   default = ["0.0.0.0/0"]
 }
-variable "security_groups" {}
-
+variable "security_groups" {
+  default = {
+    public = {
+      name        = "public_sg"
+      description = "public access"
+      ingress = {
+        open = {
+          from        = 0
+          to          = 0
+          protocol    = -1
+          cidr_blocks = [var.access_ip]
+        }
+        tg = {
+          from        = 8000
+          to          = 8000
+          protocol    = "tcp"
+          cidr_blocks = ["0.0.0.0/0"]
+        }
+        http = {
+          from        = 80
+          to          = 80
+          protocol    = "tcp"
+          cidr_blocks = ["0.0.0.0/0"]
+        }
+      }
+    }
+    rds = {
+      name        = "rds_sg"
+      description = "rds access"
+      ingress = {
+        mysql = {
+          from        = 3306
+          to          = 3306
+          protocol    = "tcp"
+          cidr_blocks = [local.vpc_cidr]
+        }
+      }
+    }
+  }
+}
 variable "db_subnet_group" {
   default = true
 }
