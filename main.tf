@@ -1,5 +1,47 @@
 # ---- mtc networking/main.tf -----
 
+locals {
+  security_groups = {
+    public = {
+      name        = "public_sg"
+      description = "public access"
+      ingress = {
+        open = {
+          from        = 0
+          to          = 0
+          protocol    = -1
+          cidr_blocks = [var.access_ip]
+        }
+        tg = {
+          from        = 8000
+          to          = 8000
+          protocol    = "tcp"
+          cidr_blocks = ["0.0.0.0/0"]
+        }
+        http = {
+          from        = 80
+          to          = 80
+          protocol    = "tcp"
+          cidr_blocks = ["0.0.0.0/0"]
+        }
+      }
+    }
+    rds = {
+      name        = "rds_sg"
+      description = "rds access"
+      ingress = {
+        mysql = {
+          from        = 3306
+          to          = 3306
+          protocol    = "tcp"
+          cidr_blocks = [local.vpc_cidr]
+        }
+      }
+    }
+  }
+}
+
+
 data "aws_availability_zones" "available" {}
 
 resource "random_integer" "random" {
@@ -97,7 +139,7 @@ resource "aws_route_table_association" "mtc_public_assoc" {
 }
 
 resource "aws_security_group" "mtc_sg" {
-  for_each    = var.security_groups
+  for_each    = local.security_groups
   name        = each.value.name
   description = each.value.description
   vpc_id      = aws_vpc.mtc_vpc.id
