@@ -17,7 +17,7 @@ variable "max_subnets" {
   default = 5
 }
 variable "access_ip" {
-  default = ["0.0.0.0/0"]
+  default = "0.0.0.0/0"
 }
 variable "db_subnet_group" {
   default = true
