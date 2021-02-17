@@ -1,3 +1,5 @@
+variable "aws_region" {}
+
 variable "vpc_cidr" {
   default = "10.123.0.0/16"
 }
@@ -16,9 +18,7 @@ variable "private_sn_count" {
 variable "max_subnets" {
   default = 5
 }
-variable "access_ip" {
-  default = "0.0.0.0/0"
-}
+variable "access_ip" {}
 variable "db_subnet_group" {
   default = true
 }
